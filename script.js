@@ -31,7 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function appendToCalcDisplay(value) { dom.calcDisplay.value += value; }
     function clearCalcDisplay() { dom.calcDisplay.value = ''; }
     function backspaceCalc() { dom.calcDisplay.value = dom.calcDisplay.value.slice(0, -1); }
-    function calculateResult() { try { const result = new Function('return ' + dom.calcDisplay.value.replace(/[^-()\d/*+.]/g, ''))(); dom.calcDisplay.value = result; } catch { dom.calcDisplay.value = 'Error'; } }
+    function calculateResult() {
+        try {
+            const result = new Function('return ' + dom.calcDisplay.value.replace(/[^-()\d/*+.]/g, ''))();
+            const roundedResult = parseFloat(result.toFixed(10));
+            dom.calcDisplay.value = roundedResult;
+        } catch {
+            dom.calcDisplay.value = 'Error';
+        }
+    }
     dom.calcButtons.addEventListener('click', e => { if (e.target.tagName !== 'BUTTON') return; const key = e.target.textContent; if (key === 'C') { clearCalcDisplay(); } else if (key === '⌫') { backspaceCalc(); } else if (key === '=') { calculateResult(); } else { appendToCalcDisplay(key); } });
     document.addEventListener('keydown', (e) => { if (document.activeElement === dom.memoText || document.activeElement.tagName === 'INPUT') return; const key = e.key; if (key === 'Escape') { e.preventDefault(); return; } if ((key >= '0' && key <= '9') || ['+', '-', '*', '/', '.', '(', ')'].includes(key)) { e.preventDefault(); appendToCalcDisplay(key); } else if (key === 'Enter' || key === '=') { e.preventDefault(); calculateResult(); } else if (key === 'Backspace') { e.preventDefault(); backspaceCalc(); } });
     dom.tabButtons.forEach(button => {
